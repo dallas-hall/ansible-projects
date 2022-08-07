@@ -1,5 +1,0 @@
----
-- name: Create a simplified Ansible best practice alternative directory structure.
-  hosts: localhost
-  roles:
-    - localhost
