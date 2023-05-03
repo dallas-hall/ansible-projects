@@ -1,0 +1,205 @@
+---
+# ~/.profile v ~/.bash_profile - https://superuser.com/a/183980 & https://askubuntu.com/a/510723
+# Skeleton files - https://serverfault.com/a/586924
+- name: Reset /home/{{ ssh_username }}/.bashrc file to default
+  ansible.builtin.copy:
+    src: "/etc/skel/.bashrc"
+    remote_src: yes
+    dest: "/home/{{ ssh_username }}/.bashrc"
+    owner: dhall
+    group: dhall
+    mode: '0644'
+
+# Set a variable based on O/S type - https://serverfault.com/a/791131
+- name: Profile location (Ubuntu)
+  set_fact:
+    skel_profile_path: "/etc/skel/.profile"
+    profile_path: "/home/{{ ssh_username }}/.profile"
+  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+
+- name: Profile location (RedHat)
+  set_fact:
+    skel_profile_path: "/etc/skel/.bash_profile"
+    profile_path: "/home/{{ ssh_username }}/.bash_profile"
+  when: (ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat')
+
+- name: Reset {{ profile_path }} file to default
+  ansible.builtin.copy:
+    src: "{{ skel_profile_path }}"
+    remote_src: yes
+    dest: "{{ profile_path }}"
+    owner: dhall
+    group: dhall
+    mode: '0644'
+
+# For non-login shells (e.g. terminal GUI on PaaS jumpbox) this should go into ~/.bash_aliases as it is sourced by ~/.bashrc.
+# ~/.profile and ~/.bash_profile are only sourced for login shells (e.g. ssh shell to PaaS server).
+- name: Copy Bash customisations to all servers
+  blockinfile:
+    path: "{{ profile_path }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK for all servers"
+    insertafter: EOF
+    block: |
+      # User specific aliases and functions
+      alias l='ls -AFhl --color=auto'
+      alias li='ls -AFhil --color=auto'
+      alias gnome-terminal='gnome-terminal --maximize'
+      alias dev='cd ~/Development'
+      alias ssh-add-keys-1-day='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"
+      alias ssh-add-keys-half-day='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"
+      alias ssh-add-keys-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"
+      alias k8s-show-all-namespace-objects=" kubectl api-resources --verbs=list --namespaced -o name  | xargs -n 1 kubectl get --show-kind --ignore-not-found  -n"
+      alias rsync='rsync --stats --progress --human-readable'
+
+      #coloured man pages
+      man() {
+          env \
+          LESS_TERMCAP_mb=$'\e[01;31m' \
+          LESS_TERMCAP_md=$'\e[01;31m' \
+          LESS_TERMCAP_me=$'\e[0m' \
+          LESS_TERMCAP_se=$'\e[0m' \
+          LESS_TERMCAP_so=$'\e[01;44;33m' \
+          LESS_TERMCAP_ue=$'\e[0m' \
+          LESS_TERMCAP_us=$'\e[01;32m' \
+          man "$@"
+      }
+      export GROFF_NO_SGR=1 #needed to get colours working
+      
+      #custom bash prompt
+      # http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+      #export PS1="\[\033[38;5;10m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput sgr0)\]\[\033[38;5;250m\]\H\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;11m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \\$ \[$(tput sgr0)\]"
+      # https://unix.stackexchange.com/a/31697
+      # color names for readibility
+      reset=$(tput sgr0)
+      bold=$(tput bold)
+      black=$(tput setaf 0)
+      red=$(tput setaf 1)
+      green=$(tput setaf 2)
+      yellow=$(tput setaf 3)
+      blue=$(tput setaf 4)
+      magenta=$(tput setaf 5)
+      cyan=$(tput setaf 6)
+      white=$(tput setaf 7)
+      #user_color=$green
+      #[ "$UID" -eq 0 ] && { user_color=$red; }
+      export PS1="\[$reset\]\[$bold\][\u@\H \W] $ \[$reset\]"
+      
+      #shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
+      export HISTCONTROL=ignoreboth:erasedups
+      shopt -s histappend
+      
+      #increase history size
+      export HISTSIZE=99999
+      
+      #allow vi commands to be used within bash
+      set -o vi
+      
+      # Java
+      if [[ -d /opt/jdk1.8.0 ]]; then
+        export JAVA_HOME=/opt/jdk1.8.0
+        export PATH=$JAVA_HOME/bin:$PATH
+      fi
+      
+      # Oracle Network alias file - https://oracle.github.io/odpi/doc/installation.html#local-database-or-full-oracle-client
+      if [[ -f /opt/oracle/network ]]; then
+        export TNS_ADMIN=/opt/oracle/network
+      fi
+      # Oracle linking path - https://oracle.github.io/odpi/doc/installation.html#oracle-instant-client-zip
+      #export LD_LIBRARY_PATH=/opt/oracle/product/12.2.0/instantclient_12_2:$LD_LIBRARY_PATH
+      #export ORACLE_HOME=/opt/oracle/product/12.2.0/instantclient_12_2
+      
+      # Use bash completion
+      if [[ -f /etc/profile.d/bash_completion.sh ]]; then
+        . /etc/profile.d/bash_completion.sh
+      fi
+      
+      # geckodriver from Mozilla, for Python's selenium
+      export PATH=/home/dhall/Development/python:$PATH
+      
+      # Ansible - https://docs.ansible.com/ansible/latest/reference_appendices/config.html#environment-variables
+      #export ANSIBLE_ROLES_PATH=$(realpath /home/dhall/Development/ansible/galaxy-roles)
+      if [[ -f /home/dhall/Development/ansible/config-file ]]; then
+        export ANSIBLE_CONFIG=home/dhall/Development/ansible/config-file
+      fi
+      if [[ -f /home/dhall/Development/ansible/galaxy-roles ]]; then
+        export ANSIBLE_ROLES_PATH=/home/dhall/Development/ansible/galaxy-roles
+      fi
+      if [[ -f /home/dhall/Development/ansible/.ansible-vault ]]; then
+        export ANSIBLE_VAULT_PASSWORD_FILE=/home/dhall/Development/ansible/.ansible-vault
+      fi
+      # https://stackoverflow.com/a/51702320
+      export ANSIBLE_HOST_KEY_CHECKING=False
+      
+      # Execution paths - https://unix.stackexchange.com/questions/36871/where-should-a-local-executable-be-placed
+      # PATH is covered by default ~/.bash_profile (RedHat) or ~/.profile (Debian)
+      if [[ ! -d $HOME/.local/bin ]]; then
+        mkdir -p $HOME/.local/bin
+      fi
+      
+      # kubectl bash completion - https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
+      if [[ -f /usr/local/bin/kubectl-v1.21.5 ]]; then
+        source <(kubectl completion bash)
+        alias k='kubectl'
+        complete -F __start_kubectl k
+      fi
+
+      # Create a /tmp folder
+      if [[ ! -d /tmp/dhall ]]; then
+        mkdir -p /tmp/dhall
+        chmod 0700 /tmp/dhall
+        ln -s /tmp/dhall ~/tmp
+      fi
+
+- name: Copy ssh-agent customisations to jumpboxes.
+  blockinfile:
+    path: "{{ profile_path }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK for jumpbox servers"
+    insertafter: EOF
+    block: |
+      # https://unix.stackexchange.com/a/132117
+      # http://rabexc.org/posts/pitfalls-of-ssh-agents
+      #ssh-add -l &>/dev/null
+      #if [ "$?" == 2 ]; then
+      #  test -r ~/.ssh-agent && \
+      #    eval "$(<~/.ssh-agent)" >/dev/null
+      #
+      #  ssh-add -l &>/dev/null
+      #  if [ "$?" == 2 ]; then
+      #    (umask 066; ssh-agent > ~/.ssh-agent)
+      #    eval "$(<~/.ssh-agent)" >/dev/null
+      #    ssh-add -t 28000
+      #    ssh-add -t 28000 ~/.ssh/id_rsa_stash
+      #  fi
+      #fi
+      
+      # Upgrade from above
+      if [[ $(id -un) = "${USER}" ]]; then
+        ssh-add -l &>/dev/null
+        rcode=${?}
+      
+      # agent running and contactable but no identities
+        if [[ ${rcode} -eq 1 ]]; then
+          # add all ssh keys with default names
+          ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519
+      
+        # agent not contactable (rcode2=1) -OR- not running (rcode2=2)
+        elif [[ ${rcode} -eq 2 ]]; then
+          [[ -r ~/.ssh-agent ]] && eval "$(<~/.ssh-agent)" >/dev/null
+          # set up requisite environment variables
+          ssh-add -l &>/dev/null
+          rcode2=${?}
+      
+          if [[ ${rcode2} -eq 1 ]]; then
+            # add all ssh keys with default names
+            ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519
+      
+          elif [[ ${rcode2} -eq 2 ]]; then
+            (umask 066 ; ssh-agent > ~/.ssh-agent)
+            # start ssh-agent
+            eval "$(<~/.ssh-agent)" >/dev/null
+            # add all ssh keys with default names
+            ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519
+          fi
+        fi
+      fi
+  when: inventory_hostname in groups['run_ssh_agent']

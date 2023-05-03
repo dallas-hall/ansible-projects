@@ -1,0 +1,32 @@
+Host devbox1,devbox2
+  HostName %h.dev.example.com
+  IdentityFile ~/.ssh/id_rsa
+
+Host qabox1,qabox2
+  HostName %h.qa.example.com
+  IdentityFile ~/.ssh/id_ed25519
+
+Host stagingbox1,stagebox2
+  HostName %h.stage.example.com
+  IdentityFile ~/.ssh/id_ed25519
+
+
+# Fowarding X means that I no longer have to do:
+# xauth nlist
+# ssh -XY $SERVER
+# xauth nmerge -
+# Paste and ^D
+host devbox* qabox* stagingbox*
+  ForwardX11 yes
+  ForwardX11Trusted yes
+
+Host *
+  ServerAliveInterval 20
+  ServerAliveCountMax 3
+  TCPKeepAlive yes
+  IdentityFile ~/.ssh/id_ed25519
+  #IdentitiesOnly yes
+  # Keyboard interactive is for RSA.
+  PreferredAuthentications publickey,password,keyboard-interactive
+  #StrictHostKeyChecking accept-new
+  ForwardAgent yes

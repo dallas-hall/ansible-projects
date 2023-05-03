@@ -1,0 +1,8 @@
+---
+- name: Copy files to /etc/X11/xorg.conf.d/
+  copy:
+    src: files/99-libinput.conf
+    dest: /etc/X11/xorg.conf.d/99-libinput.conf
+    owner: root
+    group: root
+    mode: '0644'

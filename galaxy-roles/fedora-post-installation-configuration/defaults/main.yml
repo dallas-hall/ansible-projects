@@ -1,0 +1,9 @@
+---
+# defaults file for fedora
+fedora_current: 37
+username: dallas
+using_gnome_de: True
+using_kde_de: False
+using_xfce_de: False
+using_amd_gpu: False
+using_vs_code: False

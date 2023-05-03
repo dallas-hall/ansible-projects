@@ -1,0 +1,55 @@
+---
+- name: Delete /home/{{ ssh_username }}/.ssh directory and content.
+  file:
+    state: absent
+    path: "/home/{{ ssh_username }}/.ssh/"
+  when: delete_ssh | default(false) # set in defaults/main.yml
+
+- name: Create /home/{{ ssh_username }}/.ssh directory 
+  file: 
+    path:   "/home/{{ ssh_username }}/.ssh"
+    state:  directory
+    mode:   0700
+    owner:  "{{ ssh_username }}"
+    group:  "{{ ssh_username }}"
+
+# https://docs.ansible.com/ansible/latest/modules/authorized_key_module.html#examples
+- name: Set a ssh authorized key from a file.
+  authorized_key:
+    user: "{{ ssh_username }}"
+    state: present
+    #key: "{{ lookup('file', lookup('env', 'ANSIBLE_ROLES_PATH') + '/copy-ssh-keys/files/{{ ssh_centos6_public_key }}') }}"
+    key: "{{ lookup('file', '/home/{{ ssh_username }}/.ssh/{{ item }}') }}"
+  with_items: "{{ ssh_auth_keys }}"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+- name: Copy public ssh keys to ssh jumpboxes.
+  copy:
+    src: '/home/{{ ssh_username }}/.ssh/{{ item.public }}'
+    dest: '/home/{{ ssh_username }}/.ssh/{{ item.public }}'
+    owner: '{{ ssh_username }}'
+    group: '{{ ssh_username }}'
+    mode: '0640'
+  with_items: "{{ ssh_copy_keys }}"
+  when: inventory_hostname in groups['run_ssh_agent']
+
+- name: Copy private ssh keys to ssh jumpboxes.
+  copy:
+    src: '/home/{{ ssh_username }}/.ssh/{{ item.private }}'
+    dest: '/home/{{ ssh_username }}/.ssh/{{ item.private }}'
+    owner: '{{ ssh_username }}'
+    group: '{{ ssh_username }}'
+    mode: '0600'
+  with_items: "{{ ssh_copy_keys }}"
+  when: inventory_hostname in groups['run_ssh_agent']
+
+- name: Copy ssh config to ssh jumpboxes.
+  template:
+    src: 'ssh-config.j2'
+    dest: '/home/{{ ssh_username }}/.ssh/config'
+    owner: '{{ ssh_username }}'
+    group: '{{ ssh_username }}'
+    mode: '0600'
+  when: inventory_hostname in groups['run_ssh_agent']
+
+# ssh-agent handled in setup-bash.yml

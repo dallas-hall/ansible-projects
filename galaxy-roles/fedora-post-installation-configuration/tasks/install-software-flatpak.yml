@@ -1,0 +1,18 @@
+- name: Install Flatpaks
+  flatpak:
+    # Don't use a loop it is slow.
+    name:
+    # Flatpak permissions viewer
+    - com.github.tchx84.Flatseal
+    # Messaging & video conferencing
+    - org.signal.Signal
+    - com.slack.Slack
+    - com.microsoft.Teams
+    - com.discordapp.Discord
+    - us.zoom.Zoom
+    # Internet
+    - com.dropbox.Client
+    - org.mozilla.firefox
+    # Development
+    - com.getpostman.Postman
+    state: present

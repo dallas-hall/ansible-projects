@@ -1,0 +1,155 @@
+# .bashrc
+
+# Source global definitions
+if [[ -f /etc/bashrc ]]; then
+	. /etc/bashrc
+fi
+
+# User specific aliases and functions
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+alias l='ls -AFhl --color=auto'
+alias li='ls -AFhil --color=auto'
+alias gnome-terminal='gnome-terminal --maximize'
+alias dev='cd ~/Development'
+alias ssh-add-keys-1-day='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+alias ssh-add-keys-half-day='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+alias ssh-add-keys-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+alias k8s-show-all-namespace-objects=" kubectl api-resources --verbs=list --namespaced -o name  | xargs -n 1 kubectl get --show-kind --ignore-not-found  -n"
+
+#coloured man pages
+man() {
+    env \
+    LESS_TERMCAP_mb=$'\e[01;31m' \
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    man "$@"
+}
+export GROFF_NO_SGR=1 #needed to get colours working
+
+#custom bash prompt
+# http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+#export PS1="\[\033[38;5;10m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput sgr0)\]\[\033[38;5;250m\]\H\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;11m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \\$ \[$(tput sgr0)\]"
+# https://unix.stackexchange.com/a/31697
+# color names for readibility
+reset=$(tput sgr0)
+bold=$(tput bold)
+black=$(tput setaf 0)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
+blue=$(tput setaf 4)
+magenta=$(tput setaf 5)
+cyan=$(tput setaf 6)
+white=$(tput setaf 7)
+#user_color=$green
+#[ "$UID" -eq 0 ] && { user_color=$red; }
+export PS1="\[$reset\]\[$bold\][\u@\H \W] $ \[$reset\]"
+
+#shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
+export HISTCONTROL=ignoreboth:erasedups
+shopt -s histappend
+
+#increase history size
+export HISTSIZE=99999
+
+#allow vi commands to be used within bash
+set -o vi
+
+#Java
+if [[ -d /opt/jdk1.8.0 ]]; then
+  export JAVA_HOME=/opt/jdk1.8.0
+  export PATH=$JAVA_HOME/bin:$PATH
+fi
+
+# Oracle Network alias file - https://oracle.github.io/odpi/doc/installation.html#local-database-or-full-oracle-client
+if [[ -f /opt/oracle/network ]]; then
+  export TNS_ADMIN=/opt/oracle/network
+fi
+# Oracle linking path - https://oracle.github.io/odpi/doc/installation.html#oracle-instant-client-zip
+#export LD_LIBRARY_PATH=/opt/oracle/product/12.2.0/instantclient_12_2:$LD_LIBRARY_PATH
+#export ORACLE_HOME=/opt/oracle/product/12.2.0/instantclient_12_2
+
+# Use bash completion
+if [[ -f /etc/profile.d/bash_completion.sh ]]; then
+	. /etc/profile.d/bash_completion.sh
+fi
+
+# geckodriver from Mozilla, for Python's selenium
+export PATH=/home/dhall/Development/python:$PATH
+
+# Ansible - https://docs.ansible.com/ansible/latest/reference_appendices/config.html#environment-variables
+#export ANSIBLE_ROLES_PATH=$(realpath /home/dhall/Development/ansible/galaxy-roles)
+if [[ -f /home/dhall/Development/ansible/.ansible-vault ]]; then
+  export ANSIBLE_VAULT_PASSWORD_FILE=/home/dhall/Development/ansible/.ansible-vault
+elif [[ -f /home/dhall/Development/ansible/.ansible-vault-dev ]]; then
+  export ANSIBLE_VAULT_PASSWORD_FILE=/home/dhall/Development/ansible/.ansible-vault-dev
+else [[ -f /home/dhall/Development/ansible/.ansible-vault-prod ]]; then
+  export ANSIBLE_VAULT_PASSWORD_FILE=/home/dhall/Development/ansible/.ansible-vault-prod
+fi
+
+# https://stackoverflow.com/a/51702320
+export ANSIBLE_HOST_KEY_CHECKING=False
+
+# Execution paths - https://unix.stackexchange.com/questions/36871/where-should-a-local-executable-be-placed
+PATH=$PATH:$HOME/.local/bin
+
+# kubectl bash completion - https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
+if [[ -f /usr/local/bin/kubectl ]]; then
+  source <(kubectl completion bash)
+  alias k='kubectl'
+  complete -F __start_kubectl k
+fi
+
+# http://rabexc.org/posts/pitfalls-of-ssh-agents
+#ssh-add -l &>/dev/null
+#if [ "$?" == 2 ]; then
+#  test -r ~/.ssh-agent && \
+#    eval "$(<~/.ssh-agent)" >/dev/null
+#
+#  ssh-add -l &>/dev/null
+#  if [ "$?" == 2 ]; then
+#    (umask 066; ssh-agent > ~/.ssh-agent)
+#    eval "$(<~/.ssh-agent)" >/dev/null
+#    ssh-add -t 28000
+#    ssh-add -t 28000 ~/.ssh/id_rsa_stash
+#  fi
+#fi
+
+if [[ $(id -un) = "${USER}" ]]; then
+  ssh-add -l &>/dev/null
+  rcode=${?}
+
+# agent running and contactable but no identities
+  if [[ ${rcode} -eq 1 ]]; then
+    # add all ssh keys with default names
+    ssh-add -t 3600
+
+  # agent not contactable (rcode2=1) -OR- not running (rcode2=2)
+  elif [[ ${rcode} -eq 2 ]]; then
+    [[ -r ~/.ssh-agent ]] && eval "$(<~/.ssh-agent)" >/dev/null
+    # set up requisite environment variables
+    ssh-add -l &>/dev/null
+    rcode2=${?}
+
+    if [[ ${rcode2} -eq 1 ]]; then
+      # add all ssh keys with default names
+      ssh-add -t 3600
+
+    elif [[ ${rcode2} -eq 2 ]]; then
+      (umask 066 ; ssh-agent > ~/.ssh-agent)
+      # start ssh-agent
+      eval "$(<~/.ssh-agent)" >/dev/null
+      # add all ssh keys with default names
+      ssh-add -t 3600     
+    fi
+  fi
+fi
+
+
