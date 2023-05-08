@@ -1,8 +1,9 @@
 - name: Install Flatpaks
   flatpak:
-      name: "{{ item }}"
-      state: present
-  loop:
+    # Don't use a loop it is slow.
+    name:
+    # Flatpak permissions viewer
+    - com.github.tchx84.Flatseal
     # Messaging & video conferencing
     - org.signal.Signal
     - com.slack.Slack
@@ -14,3 +15,4 @@
     - org.mozilla.firefox
     # Development
     - com.getpostman.Postman
+    state: present

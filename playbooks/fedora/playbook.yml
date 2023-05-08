@@ -1,0 +1,9 @@
+---
+- name: Configure Fedora to my liking.
+  hosts: laptop-toshiba-lan
+  become: true
+  gather_facts: true
+  roles:
+    # https://galaxy.ansible.com/robertdebock/rpmfusion
+    - robertdebock.rpmfusion
+    - fedora-post-installation-configuration

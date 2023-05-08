@@ -1,0 +1,8 @@
+---
+- name: Adding customisations to the /home/{{ ssh_username }}/.vimrc file
+  template:
+    src: "vimrc.j2"
+    dest: "/home/{{ ssh_username }}/.vimrc"
+    owner: "{{ ssh_username }}"
+    group: "{{ ssh_username }}"
+    mode: 0644

@@ -10,9 +10,7 @@
 
 - name: Install Gnome stuff
   package:
-      name: "{{ item }}"
-      state: present
-  loop:
+    name:
     - gnome-extensions-app
     - gnome-shell-extension-appindicator
     - gnome-shell-extension-openweather
@@ -30,8 +28,10 @@
     - gnome-shell-extension-drive-menu
     - gnome-tweaks
     - gnome-commander
+    - gnome-pomodoro
     # GUI keyring manager
     - seahorse
+    state: present
 
 # Remove unwanted Gnome software - https://eklitzke.org/lobotomizing-gnome
 # - name: Remove unwanted Gnome packages # Task description

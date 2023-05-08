@@ -1,40 +1,49 @@
+---
+- name: Update OS
+  import_tasks: update-os.yml
+  become: true
+
 - name: Configure Gnome DE.
   import_tasks: set-up-gnome.yml
-  become: yes
+  become: true
   when: using_gnome_de
 
 # TODO !!!
 - name: Configure XFCE DE.
   import_tasks: set-up-xfce.yml
-  become: yes
+  become: true
   when: using_xfce_de
 
 - name: Configure KDE DE.
   import_tasks: set-up-xfce.yml
-  become: yes
+  become: true
   when: using_kde_de
 
 - name: Add ~/.bashrc entries
   import_tasks: set-up-bashrc.yml
-  become: yes
+  become: true
 
 - name: Add ~/.vimrc entries
   import_tasks: set-up-vimrc.yml
-  become: yes
+  become: true
 
 - name: Add ~/.xprofile entries
   import_tasks: set-up-xprofile.yml
-  become: yes
+  become: true
+
+- name: Add /etc/X11/xorg.conf.d/ files
+  import_tasks: set-up-xorg.yml
+  become: true
 
 # Handled by a new role.
 #- name: Install RPM Fusion.
 #  import_tasks: install-rpm-fusion.yml
-#  become: yes
+#  become: true
 
 - name: Install software - dnf.
   import_tasks: install-software-dnf.yml
-  become: yes
+  become: true
 
 - name: Install software - flatpak.
   import_tasks: install-software-flatpak.yml
-  become: yes
+  become: true

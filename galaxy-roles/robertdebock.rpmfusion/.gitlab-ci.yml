@@ -1,27 +1,27 @@
 ---
-image: robertdebock/github-action-molecule:3.3.1
-
-services:
-  - docker:dind
+image: "robertdebock/github-action-molecule:4.0.8"
 
 variables:
-  DOCKER_HOST: "tcp://docker:2375"
   PY_COLORS: 1
 
 molecule:
   script:
-    - image=${image} tag=${tag} molecule test
+    - if [ -f tox.ini ] ; then tox ; fi
+    - if [ ! -f tox.ini ] ; then molecule test ; fi
   rules:
     - if: $CI_COMMIT_REF_NAME == "master"
-  retry: 1
   parallel:
     matrix:
       - image: "amazonlinux"
         tag: "latest"
       - image: "enterpriselinux"
+        tag: "8"
+      - image: "fedora"
+        tag: "36"
+      - image: "fedora"
         tag: "latest"
       - image: "fedora"
-        tag: "34"
+        tag: "rawhide"
 
 galaxy:
   script:

@@ -1,0 +1,17 @@
+---
+# tasks file for server-setup
+- name: Setup ssh # resets ~/.profile, ~/.bash_profile, and ~/.bashrc to default from /etc/skel
+  import_tasks: setup-ssh.yml # Variables source from defaults/main.yml
+  become: no
+
+- name: Customise bash environment
+  import_tasks: setup-bash.yml
+  become: no
+
+- name: Add ~/.vimrc entries
+  import_tasks: setup-vimrc.yml
+  become: no
+
+- name: Setup proxied repo access.
+  import_tasks: setup-proxied-repos.yaml
+  become: no

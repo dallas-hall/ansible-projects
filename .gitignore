@@ -115,6 +115,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+playbooks/*/.venv
 
 # Spyder project settings
 .spyderproject
@@ -139,3 +140,6 @@ vscode-ansible-workspace.code-workspace
 .idea/
 ansible-up-and-running/.vagrant/rgloader/loader.rb
 .ansible*
+
+# External roles
+galaxy-roles/robertdebock.rpmfusion/*

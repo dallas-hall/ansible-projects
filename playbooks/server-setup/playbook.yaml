@@ -1,0 +1,10 @@
+---
+- name: Configure servers to my liking.
+  hosts:
+    - all
+  become: no
+  gather_facts: yes
+  #strategy: debug
+  roles:
+    - server-setup
+
