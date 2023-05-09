@@ -1,5 +1,6 @@
 ---
 # defaults file for server-setup
+owning_username: dmp\dhall
 ssh_username: dhall
 ssh_key_path: /home/{{ ssh_username }}/.ssh
 ssh_auth_keys:

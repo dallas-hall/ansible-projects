@@ -1,4 +1,5 @@
 ---
+# https://www.gnu.org/software/bash/manual/bash.html#Bash-Startup-Files
 # ~/.profile v ~/.bash_profile - https://superuser.com/a/183980 & https://askubuntu.com/a/510723
 # Skeleton files - https://serverfault.com/a/586924
 - name: Reset /home/{{ ssh_username }}/.bashrc file to default
@@ -6,9 +7,14 @@
     src: "/etc/skel/.bashrc"
     remote_src: yes
     dest: "/home/{{ ssh_username }}/.bashrc"
-    owner: dhall
-    group: dhall
+    owner: "{{ owning_username }}"
+    group: "{{ owning_username }}"
     mode: '0644'
+
+- name: What Linux family am I?
+  debug:
+    msg:
+    - "{{ ansible_distribution }}"
 
 # Set a variable based on O/S type - https://serverfault.com/a/791131
 - name: Profile location (Ubuntu)
@@ -23,13 +29,19 @@
     profile_path: "/home/{{ ssh_username }}/.bash_profile"
   when: (ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat')
 
+- name: Profile location (Amazon)
+  set_fact:
+    skel_profile_path: "/etc/skel/.bashrc"
+    profile_path: "/home/{{ ssh_username }}/.bashrc"
+  when: (ansible_distribution == 'Amazon')
+
 - name: Reset {{ profile_path }} file to default
   ansible.builtin.copy:
     src: "{{ skel_profile_path }}"
     remote_src: yes
     dest: "{{ profile_path }}"
-    owner: dhall
-    group: dhall
+    owner: "{{ owning_username }}"
+    group: "{{ owning_username }}"
     mode: '0644'
 
 # For non-login shells (e.g. terminal GUI on PaaS jumpbox) this should go into ~/.bash_aliases as it is sourced by ~/.bashrc.
@@ -45,9 +57,9 @@
       alias li='ls -AFhil --color=auto'
       alias gnome-terminal='gnome-terminal --maximize'
       alias dev='cd ~/Development'
-      alias ssh-add-keys-1-day='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"
-      alias ssh-add-keys-half-day='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"
-      alias ssh-add-keys-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"
+      alias ssh-add-keys-1-day='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+      alias ssh-add-keys-half-day='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+      alias ssh-add-keys-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
       alias k8s-show-all-namespace-objects=" kubectl api-resources --verbs=list --namespaced -o name  | xargs -n 1 kubectl get --show-kind --ignore-not-found  -n"
       alias rsync='rsync --stats --progress --human-readable'
 

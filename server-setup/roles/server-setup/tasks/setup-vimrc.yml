@@ -3,6 +3,6 @@
   template:
     src: "vimrc.j2"
     dest: "/home/{{ ssh_username }}/.vimrc"
-    owner: "{{ ssh_username }}"
-    group: "{{ ssh_username }}"
+    owner: "{{ owning_username }}"
+    group: "{{ owning_username }}"
     mode: 0644

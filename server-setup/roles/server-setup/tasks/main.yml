@@ -12,6 +12,6 @@
   import_tasks: setup-vimrc.yml
   become: no
 
-- name: Setup proxied repo access.
-  import_tasks: setup-proxied-repos.yaml
-  become: no
+# - name: Setup proxied repo access.
+#   import_tasks: setup-proxied-repos.yaml
+#   become: no
