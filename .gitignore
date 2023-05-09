@@ -142,4 +142,4 @@ ansible-up-and-running/.vagrant/rgloader/loader.rb
 .ansible*
 
 # External roles
-galaxy-roles/robertdebock.rpmfusion/*
+*/roles/robertdebock.rpmfusion

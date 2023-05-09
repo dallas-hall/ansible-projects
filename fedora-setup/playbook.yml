@@ -6,4 +6,4 @@
   roles:
     # https://galaxy.ansible.com/robertdebock/rpmfusion
     - robertdebock.rpmfusion
-    - fedora-post-installation-configuration
+    - fedora-setup
