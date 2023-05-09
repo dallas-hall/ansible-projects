@@ -1,12 +1,15 @@
 all:
   hosts:
-    jumpbox[1:2].example.com:
-    devbox[1:2].dev.example.com:
-    qabox[1:2].qa.example.com:
-    stagingbox[1:2].staging.example.com:
-    spark[1:5].example.com:
-    k8s[1:5].example.com:
+    devbox[1:2].example.com:
+    qabox[1:2].example.com:
+    staging[1:2].example.com:
+    spark-cluster[1:5].example.com:
+    k8s-cluster[1:5].example.com:
     app-vm[1:5].example.com:
+  children:
+    run_ssh_agent:
+      hosts:
+        jumpbox[1:2].example.com:
   vars:
     ansible_user: dhall
     ansible_connection: ssh
