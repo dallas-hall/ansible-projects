@@ -57,9 +57,9 @@
       alias li='ls -AFhil --color=auto'
       alias gnome-terminal='gnome-terminal --maximize'
       alias dev='cd ~/Development'
-      alias ssh-add-keys-1-day='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
-      alias ssh-add-keys-half-day='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
-      alias ssh-add-keys-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+      alias ssh-add-keys-8-hours='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+      alias ssh-add-keys-4-hours='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
+      alias ssh-add-keys-1-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
       alias k8s-show-all-namespace-objects=" kubectl api-resources --verbs=list --namespaced -o name  | xargs -n 1 kubectl get --show-kind --ignore-not-found  -n"
       alias rsync='rsync --stats --progress --human-readable'
 
