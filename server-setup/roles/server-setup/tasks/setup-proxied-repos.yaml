@@ -1,36 +1,36 @@
 ---
-- name: Create /home/{{ ssh_username }}/.config/pip directory 
+- name: Create {{ remote_home }}/.config/pip directory 
   file: 
-    path:   "/home/{{ ssh_username }}/.config/pip"
+    path:   "{{ remote_home }}/.config/pip"
     state:  directory
     mode:   0755
-    owner:  "{{ owning_username }}"
-    group:  "{{ owning_username }}"
+    owner:  "{{ remote_username }}"
+    #group:  "{{ remote_username }}"
   when: inventory_hostname in groups['run_ssh_agent']
 
 - name: Add proxied Python configuration to ~/.config/pip/pip.conf
   template:
     src: "proxied-pip-config.j2"
-    dest: "/home/{{ ssh_username }}/.config/pip/pip.conf"
-    owner: "{{ owning_username }}"
-    group: "{{ owning_username }}"
+    dest: "{{ remote_home }}/.config/pip/pip.conf"
+    owner: "{{ remote_username }}"
+    #group: "{{ remote_username }}"
     mode: 0644
   when: inventory_hostname in groups['run_ssh_agent']
 
-- name: Create /home/{{ ssh_username }}/.m2 
+- name: Create {{ remote_home }}/.m2 
   file: 
-    path:   "/home/{{ ssh_username }}/.m2"
+    path:   "{{ remote_home }}/.m2"
     state:  directory
     mode:   0755
-    owner:  "{{ owning_username }}"
-    group:  "{{ owning_username }}"
+    owner:  "{{ remote_username }}"
+    #group:  "{{ remote_username }}"
   when: inventory_hostname in groups['run_ssh_agent']
 
 - name: Add proxied Maven Central configuration to ~/.m2/settings.xml
   template:
     src: "proxied-maven-settings-xml.j2"
-    dest: "/home/{{ ssh_username }}/.m2/settings.xml"
-    owner: "{{ owning_username }}"
-    group: "{{ owning_username }}"
+    dest: "{{ remote_home }}/.m2/settings.xml"
+    owner: "{{ remote_username }}"
+    #group: "{{ remote_username }}"
     mode: 0644
   when: inventory_hostname in groups['run_ssh_agent']

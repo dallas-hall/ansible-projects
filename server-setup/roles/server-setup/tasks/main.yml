@@ -1,5 +1,20 @@
 ---
 # tasks file for server-setup
+# https://stackoverflow.com/a/48892377
+- name: Get {{ remote_username }} user details from remote server and save them. 
+  user:
+    name: "{{ remote_username }}"
+    state: present
+  register: remote_username_registered
+
+- name: Set the remote_home variable.
+  ansible.builtin.set_fact:
+    remote_home: "{{ remote_username_registered.home }}"
+
+- name: Print the remote_home variable.
+  debug:
+    msg: "{{ remote_home }}"
+
 - name: Setup ssh # resets ~/.profile, ~/.bash_profile, and ~/.bashrc to default from /etc/skel
   import_tasks: setup-ssh.yml # Variables source from defaults/main.yml
   become: no

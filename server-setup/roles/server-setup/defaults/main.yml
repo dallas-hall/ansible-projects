@@ -1,15 +1,12 @@
 ---
 # defaults file for server-setup
-owning_username: dmp\dhall
-ssh_username: dhall
-ssh_key_path: /home/{{ ssh_username }}/.ssh
+remote_username: dhall
+# These files need to on the Ansible control machine.
 ssh_auth_keys:
   - 'id_rsa.pub'
   - 'id_ed25519.pub'
 ssh_copy_keys:
   - { private: 'id_rsa', public: 'id_rsa.pub' }
   - { private: 'id_ed25519', public: 'id_ed25519.pub' }
-
 # A switch for setting up dev or prod jump boxes. Toggles on and off things like .ssh/config entries.
 delete_ssh: False
-

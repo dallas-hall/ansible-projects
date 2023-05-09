@@ -1,44 +1,44 @@
 ---
-- name: Delete /home/{{ ssh_username }}/.ssh directory and content.
+- name: Delete {{ remote_home }}/.ssh directory and content.
   file:
     state: absent
-    path: "/home/{{ ssh_username }}/.ssh/"
+    path: "{{ remote_home }}/.ssh/"
   when: delete_ssh | default(false) # set in defaults/main.yml
 
-- name: Create /home/{{ ssh_username }}/.ssh directory 
+- name: Create {{ remote_home }}/.ssh directory 
   file: 
-    path:   "/home/{{ ssh_username }}/.ssh"
+    path:   "{{ remote_home }}/.ssh"
     state:  directory
     mode:   0700
-    owner:  "{{ owning_username }}"
-    group:  "{{ owning_username }}"
+    owner:  "{{ remote_username }}"
+    #group:  "{{ remote_username }}"
 
 # https://docs.ansible.com/ansible/latest/modules/authorized_key_module.html#examples
 - name: Set a ssh authorized key from a file.
   authorized_key:
-    user: "{{ owning_username }}"
+    user: "{{ remote_username }}"
     state: present
     #key: "{{ lookup('file', lookup('env', 'ANSIBLE_ROLES_PATH') + '/copy-ssh-keys/files/{{ ssh_centos6_public_key }}') }}"
-    key: "{{ lookup('file', '/home/{{ ssh_username }}/.ssh/{{ item }}') }}"
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/{{ item }}') }}"
   with_items: "{{ ssh_auth_keys }}"
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
 - name: Copy public ssh keys to ssh jumpboxes.
   copy:
-    src: '/home/{{ ssh_username }}/.ssh/{{ item.public }}'
-    dest: '/home/{{ ssh_username }}/.ssh/{{ item.public }}'
-    owner: '{{ owning_username }}'
-    group: '{{ owning_username }}'
+    src: '{{ remote_home }}/.ssh/{{ item.public }}'
+    dest: '{{ remote_home }}/.ssh/{{ item.public }}'
+    owner: '{{ remote_username }}'
+    #group: '{{ remote_username }}'
     mode: '0640'
   with_items: "{{ ssh_copy_keys }}"
   when: inventory_hostname in groups['run_ssh_agent']
 
 - name: Copy private ssh keys to ssh jumpboxes.
   copy:
-    src: '/home/{{ ssh_username }}/.ssh/{{ item.private }}'
-    dest: '/home/{{ ssh_username }}/.ssh/{{ item.private }}'
-    owner: '{{ owning_username }}'
-    group: '{{ owning_username }}'
+    src: '{{ remote_home }}/.ssh/{{ item.private }}'
+    dest: '{{ remote_home }}/.ssh/{{ item.private }}'
+    owner: '{{ remote_username }}'
+    #group: '{{ remote_username }}'
     mode: '0600'
   with_items: "{{ ssh_copy_keys }}"
   when: inventory_hostname in groups['run_ssh_agent']
@@ -46,9 +46,9 @@
 - name: Copy ssh config to ssh jumpboxes.
   template:
     src: 'ssh-config.j2'
-    dest: '/home/{{ ssh_username }}/.ssh/config'
-    owner: '{{ owning_username }}'
-    group: '{{ owning_username }}'
+    dest: '{{ remote_home }}/.ssh/config'
+    owner: '{{ remote_username }}'
+    #group: '{{ remote_username }}'
     mode: '0600'
   when: inventory_hostname in groups['run_ssh_agent']
 

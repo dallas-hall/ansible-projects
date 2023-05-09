@@ -2,13 +2,13 @@
 # https://www.gnu.org/software/bash/manual/bash.html#Bash-Startup-Files
 # ~/.profile v ~/.bash_profile - https://superuser.com/a/183980 & https://askubuntu.com/a/510723
 # Skeleton files - https://serverfault.com/a/586924
-- name: Reset /home/{{ ssh_username }}/.bashrc file to default
+- name: Reset {{ remote_home }}/.bashrc file to default
   ansible.builtin.copy:
     src: "/etc/skel/.bashrc"
     remote_src: yes
-    dest: "/home/{{ ssh_username }}/.bashrc"
-    owner: "{{ owning_username }}"
-    group: "{{ owning_username }}"
+    dest: "{{ remote_home }}/.bashrc"
+    owner: "{{ remote_username }}"
+    #group: "{{ remote_username }}"
     mode: '0644'
 
 - name: What Linux family am I?
@@ -20,19 +20,19 @@
 - name: Profile location (Ubuntu)
   set_fact:
     skel_profile_path: "/etc/skel/.profile"
-    profile_path: "/home/{{ ssh_username }}/.profile"
+    profile_path: "{{ remote_home }}/.profile"
   when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
 - name: Profile location (RedHat)
   set_fact:
     skel_profile_path: "/etc/skel/.bash_profile"
-    profile_path: "/home/{{ ssh_username }}/.bash_profile"
+    profile_path: "{{ remote_home }}/.bash_profile"
   when: (ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat')
 
 - name: Profile location (Amazon)
   set_fact:
     skel_profile_path: "/etc/skel/.bashrc"
-    profile_path: "/home/{{ ssh_username }}/.bashrc"
+    profile_path: "{{ remote_home }}/.bashrc"
   when: (ansible_distribution == 'Amazon')
 
 - name: Reset {{ profile_path }} file to default
@@ -40,8 +40,8 @@
     src: "{{ skel_profile_path }}"
     remote_src: yes
     dest: "{{ profile_path }}"
-    owner: "{{ owning_username }}"
-    group: "{{ owning_username }}"
+    owner: "{{ remote_username }}"
+    #group: "{{ remote_username }}"
     mode: '0644'
 
 # For non-login shells (e.g. terminal GUI on PaaS jumpbox) this should go into ~/.bash_aliases as it is sourced by ~/.bashrc.
