@@ -143,3 +143,6 @@ ansible-up-and-running/.vagrant/rgloader/loader.rb
 
 # External roles
 */roles/robertdebock.rpmfusion
+
+# Work stuff
+*-hosts
