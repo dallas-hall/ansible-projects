@@ -35,7 +35,7 @@
     profile_path: "{{ remote_home }}/.bashrc"
   when: (ansible_distribution == 'Amazon')
 
-- name: Reset {{ profile_path }} file to default
+- name: Reset profile_path file to default
   ansible.builtin.copy:
     src: "{{ skel_profile_path }}"
     remote_src: yes
@@ -63,7 +63,7 @@
       alias k8s-show-all-namespace-objects=" kubectl api-resources --verbs=list --namespaced -o name  | xargs -n 1 kubectl get --show-kind --ignore-not-found  -n"
       alias rsync='rsync --stats --progress --human-readable'
 
-      #coloured man pages
+      # Coloured man pages
       man() {
           env \
           LESS_TERMCAP_mb=$'\e[01;31m' \
@@ -77,7 +77,7 @@
       }
       export GROFF_NO_SGR=1 #needed to get colours working
       
-      #custom bash prompt
+      # Custom bash prompt
       # http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
       #export PS1="\[\033[38;5;10m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput sgr0)\]\[\033[38;5;250m\]\H\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;11m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \\$ \[$(tput sgr0)\]"
       # https://unix.stackexchange.com/a/31697
@@ -96,8 +96,10 @@
       #[ "$UID" -eq 0 ] && { user_color=$red; }
       export PS1="\[$reset\]\[$bold\][\u@\H \W] $ \[$reset\]"
       
-      #shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
-      export HISTCONTROL=ignoreboth:erasedups
+      # https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html#index-HISTCONTROL
+      # Shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
+      #export HISTCONTROL=ignoreboth:erasedups
+      export HISTCONTROL=ignorespace
       shopt -s histappend
       
       #increase history size
