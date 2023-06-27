@@ -1,6 +1,7 @@
 ---
 # tasks file for server-setup
 # https://stackoverflow.com/a/48892377
+# If this fails you have the wrong remote_username set in defaults/main.yml
 - name: Get {{ remote_username }} user details from remote server and save them. 
   user:
     name: "{{ remote_username }}"
@@ -30,3 +31,7 @@
 # - name: Setup proxied repo access.
 #   import_tasks: setup-proxied-repos.yaml
 #   become: no
+
+- name: Install useful packages.
+  import_tasks: install-packages.yml
+  become: yes

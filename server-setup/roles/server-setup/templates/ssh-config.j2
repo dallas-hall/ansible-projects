@@ -10,7 +10,6 @@ Host stagingbox1,stagebox2
   HostName %h.stage.example.com
   IdentityFile ~/.ssh/id_ed25519
 
-
 # Fowarding X means that I no longer have to do:
 # xauth nlist
 # ssh -XY $SERVER
@@ -29,4 +28,4 @@ Host *
   # Keyboard interactive is for RSA.
   PreferredAuthentications publickey,password,keyboard-interactive
   #StrictHostKeyChecking accept-new
-  ForwardAgent yes
+  ForwardAgent no

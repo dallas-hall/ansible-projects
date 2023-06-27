@@ -146,3 +146,6 @@ ansible-up-and-running/.vagrant/rgloader/loader.rb
 
 # Work stuff
 *-hosts
+*-hosts.ini
+*-hosts.yml
+*-hosts.yaml

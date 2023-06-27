@@ -1,0 +1,11 @@
+---
+- name: Install useful packages.
+  ansible.builtin.package:
+    name:
+    - lsof
+    - bash-completion
+    - bash-completion-extras
+    - nmap-ncat
+    - bind-utils
+    - htop
+    state: latest

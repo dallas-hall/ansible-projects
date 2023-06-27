@@ -13,7 +13,7 @@ fi
 alias l='ls -AFhl --color=auto'
 alias li='ls -AFhil --color=auto'
 alias gnome-terminal='gnome-terminal --maximize'
-alias dev='cd ~/Development'
+alias dev='cd ~/Code'
 alias dls='cd ~/Downloads'
 alias ssh-add-keys-8-hours='echo "ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 28000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
 alias ssh-add-keys-4-hours='echo "ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 14000 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
@@ -53,12 +53,15 @@ white=$(tput setaf 7)
 #[ "$UID" -eq 0 ] && { user_color=$red; }
 export PS1="\[$reset\]\[$bold\][\u@\H \W] $ \[$reset\]"
 
-#shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
+# Shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
 export HISTCONTROL=ignoreboth:erasedups
 shopt -s histappend
 
 #increase history size
 export HISTSIZE=99999
+
+# Add timestamps to history
+HISTTIMEFORMAT="%F %T "
 
 #allow vi commands to be used within bash
 set -o vi

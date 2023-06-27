@@ -7,4 +7,5 @@
   #strategy: debug
   roles:
     - server-setup
-
+  vars:
+    - ansible_python_interpreter: auto
