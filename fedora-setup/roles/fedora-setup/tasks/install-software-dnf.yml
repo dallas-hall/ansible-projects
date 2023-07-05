@@ -55,7 +55,7 @@
       - codium
       # Multimedia
       - vlc
-      - clementine
+      - strawberry
       # Archivers
       - p7zip
       - p7zip-plugins
@@ -103,13 +103,15 @@
       # SELinux
       - setroubleshoot
       - setroubleshoot-plugins
-      # display management
+      # Display management
       - autorandr
-      # graphics
+      # MS Paint rip off
       - pinta
       # Disk tools
       - nvme-cli
       - smartmontools
+      # Display keyboard strokes on screen
+      - screenkey
       state: present
       update_cache: yes
 
