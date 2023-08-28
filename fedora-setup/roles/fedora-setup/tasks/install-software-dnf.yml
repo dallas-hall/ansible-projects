@@ -116,7 +116,7 @@
       update_cache: yes
 
 - name: Install group packages.
-  yum:
+  dnf:
     name:
     - "@Development tools"
     - "@Multimedia"
@@ -124,6 +124,7 @@
     - "@i3-desktop-environment"
     - "@virtualization"
     state: present
+    allowerasing: true # Needed to remove the free codecs which are automatically installed.
 
 - name: Add Flathub
   command: flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo

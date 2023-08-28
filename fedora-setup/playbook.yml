@@ -1,6 +1,6 @@
 ---
 - name: Configure Fedora to my liking.
-  hosts: laptop-toshiba-lan
+  hosts: localhost
   become: true
   gather_facts: true
   roles:

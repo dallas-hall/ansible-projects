@@ -64,13 +64,16 @@ white=$(tput setaf 7)
 #[ "$UID" -eq 0 ] && { user_color=$red; }
 PS1="\[$reset\]\[$bold\][\u@\h \W] $ \[$reset\]"
 
-#shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
+# Shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
 HISTCONTROL=ignoredups:erasedups
 shopt -s histappend
 PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
 
 #increase history size
 export HISTSIZE=9999
+
+# View timestamp in history
+HISTTIMEFORMAT="%F %T "
 
 #allow vim commands in bash
 set -o vi

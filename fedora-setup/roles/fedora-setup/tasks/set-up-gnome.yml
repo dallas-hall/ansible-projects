@@ -13,6 +13,7 @@
     name:
     - gnome-extensions-app
     - gnome-shell-extension-appindicator
+    - gnome-shell-extension-apps-menu
     - gnome-shell-extension-openweather
     - gnome-shell-extension-workspace-indicator
     - gnome-shell-extension-sound-output-device-chooser
@@ -32,6 +33,8 @@
     # GUI keyring manager
     - seahorse
     state: present
+  # Ignore missing packages.
+  ignore_errors: true
 
 # Remove unwanted Gnome software - https://eklitzke.org/lobotomizing-gnome
 # - name: Remove unwanted Gnome packages # Task description

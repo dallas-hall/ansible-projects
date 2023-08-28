@@ -13,12 +13,12 @@ fi
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
-alias dev='cd ~/Development'
+alias dev='cd ~/Code'
 alias dls='cd ~/Downloads'
 alias opt='cd ~/opt'
 alias opt2='cd /opt'
 alias docs='cd ~/Documents'
-alias dev2='cd /media/veracrypt1/Development'
+alias dev2='cd /media/veracrypt1/Code'
 alias data='cd /media/veracrypt2'
 alias books='cd /home/dallas/Documents/Books'
 alias study='cd /home/dallas/Documents/Study'
@@ -75,10 +75,13 @@ white=$(tput setaf 7)
 #[ "$UID" -eq 0 ] && { user_color=$red; }
 PS1="\[$reset\]\[$bold\][\u@\h \W] $ \[$reset\]"
 
-#shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
+# Shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
 HISTCONTROL=ignoredups:erasedups
 shopt -s histappend
 PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+
+# View timestamp in history
+HISTTIMEFORMAT="%F %T "
 
 #increase history size
 export HISTSIZE=99999
@@ -92,16 +95,16 @@ export PS4='$LINENO + '
 # https://github.com/atom/atom/issues/17452
 export ELECTRON_TRASH=gio
 
-# https://cwiki.apache.org/confluence/display/AMBARI/Ambari+Development
+# https://cwiki.apache.org/confluence/display/AMBARI/Ambari+Code
 export JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk"
 #export _JAVA_OPTIONS="-Xmx2048m -XX:MaxPermSize=512m -Djava.awt.headless=true"
 
-export ANSIBLE_ROLES_PATH="/home/dallas/Development/ansible/galaxy-roles"
-#export ANSIBLE_ROLES_PATH="/home/dallas/Development/paas/galaxy-roles"
+export ANSIBLE_ROLES_PATH="/home/dallas/Code/ansible/galaxy-roles"
+#export ANSIBLE_ROLES_PATH="/home/dallas/Code/paas/galaxy-roles"
 
 # https://www.vagrantup.com/docs/other/environmental-variables.html#vagrant_home
 export VAGRANT_HOME="/ssd/vagrant"
-export VAGRANT_DOTFILE_PATH="/ssd/Development"
+export VAGRANT_DOTFILE_PATH="/ssd/Code"
 
 # podman can replace docker - https://podman.io/getting-started/
 alias docker='podman'
