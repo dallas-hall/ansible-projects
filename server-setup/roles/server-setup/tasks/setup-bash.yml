@@ -46,9 +46,10 @@
 
 # For non-login shells (e.g. terminal GUI on PaaS jumpbox) this should go into ~/.bash_aliases as it is sourced by ~/.bashrc.
 # ~/.profile and ~/.bash_profile are only sourced for login shells (e.g. ssh shell to PaaS server).
+# I ended up just using ~/.bashrc since it is sourced by the login shell via the profile file.
 - name: Copy Bash customisations to all servers
   blockinfile:
-    path: "{{ profile_path }}"
+    path: "{{ remote_home }}/.bashrc"
     marker: "# {mark} ANSIBLE MANAGED BLOCK for all servers"
     insertafter: EOF
     block: |
@@ -131,18 +132,18 @@
       fi
       
       # geckodriver from Mozilla, for Python's selenium
-      export PATH=/home/dhall/Development/python:$PATH
+      export PATH=/home/dhall/Code/python:$PATH
       
       # Ansible - https://docs.ansible.com/ansible/latest/reference_appendices/config.html#environment-variables
-      #export ANSIBLE_ROLES_PATH=$(realpath /home/dhall/Development/ansible/galaxy-roles)
-      if [[ -f /home/dhall/Development/ansible/config-file ]]; then
-        export ANSIBLE_CONFIG=home/dhall/Development/ansible/config-file
+      #export ANSIBLE_ROLES_PATH=$(realpath /home/dhall/Code/ansible/galaxy-roles)
+      if [[ -f /home/dhall/Code/ansible/config-file ]]; then
+        export ANSIBLE_CONFIG=home/dhall/Code/ansible/config-file
       fi
-      if [[ -f /home/dhall/Development/ansible/galaxy-roles ]]; then
-        export ANSIBLE_ROLES_PATH=/home/dhall/Development/ansible/galaxy-roles
+      if [[ -f /home/dhall/Code/ansible/galaxy-roles ]]; then
+        export ANSIBLE_ROLES_PATH=/home/dhall/Code/ansible/galaxy-roles
       fi
-      if [[ -f /home/dhall/Development/ansible/.ansible-vault ]]; then
-        export ANSIBLE_VAULT_PASSWORD_FILE=/home/dhall/Development/ansible/.ansible-vault
+      if [[ -f /home/dhall/Code/ansible/.ansible-vault ]]; then
+        export ANSIBLE_VAULT_PASSWORD_FILE=/home/dhall/Code/ansible/.ansible-vault
       fi
       # https://stackoverflow.com/a/51702320
       export ANSIBLE_HOST_KEY_CHECKING=False
@@ -166,10 +167,15 @@
         chmod 0700 /tmp/dhall
         ln -s /tmp/dhall ~/tmp
       fi
+      
+      # Increase bash timeout to 4 hours - https://unix.stackexchange.com/questions/400920/where-is-tmout-being-set-in-centos-7-how-can-i-disable-it
+      if [[ -v "$TMOUT" ]]; then
+        export TMOUT=14000
+      fi
 
 - name: Copy ssh-agent customisations to jumpboxes.
   blockinfile:
-    path: "{{ profile_path }}"
+    path: "{{ remote_home }}/.bashrc"
     marker: "# {mark} ANSIBLE MANAGED BLOCK for jumpbox servers"
     insertafter: EOF
     block: |
@@ -219,4 +225,10 @@
           fi
         fi
       fi
+
+      # Increase bash timeout to 8 hours - https://unix.stackexchange.com/questions/400920/where-is-tmout-being-set-in-centos-7-how-can-i-disable-it
+      if [[ -v "$TMOUT" ]]; then
+        export TMOUT=28000
+      fi
+
   when: inventory_hostname in groups['run_ssh_agent']

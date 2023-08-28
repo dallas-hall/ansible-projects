@@ -7,31 +7,63 @@
     name: "{{ remote_username }}"
     state: present
   register: remote_username_registered
+  tags:
+  - setup_ssh
+  - setup_bash
+  - setup_vimrc
+  - setup_all
 
 - name: Set the remote_home variable.
   ansible.builtin.set_fact:
     remote_home: "{{ remote_username_registered.home }}"
+  tags:
+  - setup_ssh
+  - setup_bash
+  - setup_vimrc
+  - setup_all
 
 - name: Print the remote_home variable.
   debug:
     msg: "{{ remote_home }}"
+  tags:
+  - setup_ssh
+  - setup_bash
+  - setup_vimrc
+  - setup_all
 
 - name: Setup ssh # resets ~/.profile, ~/.bash_profile, and ~/.bashrc to default from /etc/skel
   import_tasks: setup-ssh.yml # Variables source from defaults/main.yml
   become: no
+  tags:
+  - setup_ssh
+  - setup_all
 
 - name: Customise bash environment
   import_tasks: setup-bash.yml
   become: no
+  tags:
+  - setup_bash
+  - setup_all
 
 - name: Add ~/.vimrc entries
   import_tasks: setup-vimrc.yml
   become: no
+  tags:
+  - setup_vimrc
+  - setup_all
 
-# - name: Setup proxied repo access.
-#   import_tasks: setup-proxied-repos.yaml
-#   become: no
+- name: Setup proxied repo access.
+  import_tasks: setup-proxied-repos.yaml
+  become: no
+  tags:
+  - never
+  - setup_proxy
+
 
 - name: Install useful packages.
   import_tasks: install-packages.yml
   become: yes
+  tags:
+  - never
+  - install_packages
+
