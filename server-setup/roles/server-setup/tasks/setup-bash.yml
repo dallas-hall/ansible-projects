@@ -173,6 +173,9 @@
         export TMOUT=14000
       fi
 
+      # Bash history timestamps - https://askubuntu.com/questions/391082/how-to-see-time-stamps-in-bash-history
+      HISTTIMEFORMAT="%F %T "
+
 - name: Copy ssh-agent customisations to jumpboxes.
   blockinfile:
     path: "{{ remote_home }}/.bashrc"
