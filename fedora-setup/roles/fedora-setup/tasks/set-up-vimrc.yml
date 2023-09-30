@@ -8,7 +8,6 @@
     state: touch
 
 - name: Create user .vimrc file
-  become: yes
   file:
     path: /root/.vimrc
     owner: root
@@ -17,17 +16,16 @@
     state: touch
 
 - name: Adding customisations to the /home/{{ username }}/.vimrc file
-  template: # https://docs.ansible.com/ansible/latest/modules/template_module.html
-    src: templates/vimrc-both.j2
+  copy: # https://docs.ansible.com/ansible/latest/modules/template_module.html
+    src: vimrc-both
     dest: "/home/{{ username }}/.vimrc"
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: 0644
 
 - name: Adding customisations to the /root/.vimrc file
-  become: yes
-  template: # https://docs.ansible.com/ansible/latest/modules/template_module.html
-    src: templates/vimrc-both.j2
+  copy: # https://docs.ansible.com/ansible/latest/modules/template_module.html
+    src: vimrc-both
     dest: "/root/.vimrc"
     owner: root
     group: root

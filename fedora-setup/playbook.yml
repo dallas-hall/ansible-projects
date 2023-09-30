@@ -1,6 +1,6 @@
 ---
 - name: Configure Fedora to my liking.
-  hosts: localhost
+  hosts: desktop
   become: true
   gather_facts: true
   roles:

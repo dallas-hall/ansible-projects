@@ -8,6 +8,62 @@
 - name: Update Gnome settings - Remove mouse acceleration
   command: gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'flat'
 
+# https://www.reddit.com/r/gnome/comments/l3ha66/how_to_export_and_import_all_gnome_keyboard/
+- name: Copy Gnome Desktop shortcuts 1.
+  become_user: "{{ username }}"
+  copy:
+    src: gnome-shortcuts1
+    dest: /tmp/gnome-shortcuts1
+    mode: '0644'
+
+- name: Import Gnome Desktop shortcuts 1.
+  become_user: "{{ username }}"
+  shell: cat /tmp/gnome-shortcuts1 | dconf load /org/gnome/settings-daemon/plugins/media-keys/
+
+- name: Copy Gnome Desktop shortcuts 2.
+  become_user: "{{ username }}"
+  copy:
+    src: gnome-shortcuts2
+    dest: /tmp/gnome-shortcuts2
+    mode: '0644'
+
+- name: Import Gnome Desktop shortcuts 2.
+  become_user: "{{ username }}"
+  shell: cat /tmp/gnome-shortcuts2 | dconf load /org/gnome/desktop/wm/keybindings/
+
+- name: Copy Gnome Desktop shortcuts 3.
+  become_user: "{{ username }}"
+  copy:
+    src: gnome-shortcuts3
+    dest: /tmp/gnome-shortcuts3
+    mode: '0644'
+
+- name: Import Gnome Desktop shortcuts 3.
+  become_user: "{{ username }}"
+  shell: cat /tmp/gnome-shortcuts3 | dconf load /org/gnome/shell/keybindings/
+
+- name: Copy Gnome Desktop shortcuts 4.
+  become_user: "{{ username }}"
+  copy:
+    src: gnome-shortcuts4
+    dest: /tmp/gnome-shortcuts4
+    mode: '0644'
+
+- name: Import Gnome Desktop shortcuts 4.
+  become_user: "{{ username }}"
+  shell: cat /tmp/gnome-shortcuts4 | dconf load /org/gnome/mutter/keybindings/
+
+- name: Copy Gnome Desktop shortcuts 5.
+  become_user: "{{ username }}"
+  copy:
+    src: gnome-shortcuts5
+    dest: /tmp/gnome-shortcuts5
+    mode: '0644'
+
+- name: Import Gnome Desktop shortcuts 5.
+  become_user: "{{ username }}"
+  shell: cat /tmp/gnome-shortcuts5 | dconf load /org/gnome/mutter/wayland/keybindings/
+
 - name: Install Gnome stuff
   package:
     name:

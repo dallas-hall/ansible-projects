@@ -1,15 +1,15 @@
 ---
 - name: Adding customisations to the /home/{{ username }}/.bashrc file
-  template:
-    src: "bashrc-user.j2"
+  copy:
+    src: "bashrc-user"
     dest: "/home/{{ username }}/.bashrc"
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: 0644
 
 - name: Adding customisations to the /root/.bashrc file
-  template:
-    src: "bashrc-root.j2"
+  copy:
+    src: "bashrc-root"
     dest: "/root/.bashrc"
     owner: root
     group: root

@@ -7,6 +7,8 @@
   import_tasks: set-up-gnome.yml
   become: true
   when: using_gnome_de
+  tags:
+    - set_up_gnome
 
 # TODO !!!
 - name: Configure XFCE DE.
@@ -51,7 +53,7 @@
 - name: Set up crontab
   import_tasks: set-up-crontab.yml
   become: true
-  when: "'my-dell-laptop' in group_names"
+  when: "'my-desktop' in group_names"
   tags:
     - set_up_cron
 
@@ -95,3 +97,5 @@
 # kernel amounts ✅
 # fstrim ❌
 # crypttab and fstab ❌
+# Gnome desktop shortcuts ✅
+# Gnome terminal shortcuts / profile ❌

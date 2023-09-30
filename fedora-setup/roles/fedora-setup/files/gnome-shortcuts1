@@ -1,0 +1,15 @@
+[/]
+control-center=['<Super>i']
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']
+home=['<Super>e']
+screensaver=['<Super>l']
+
+[custom-keybindings/custom0]
+binding='<Control><Alt>t'
+command='gnome-terminal --show-menubar --maximize'
+name='Terminal'
+
+[custom-keybindings/custom1]
+binding='<Shift><Control>Escape'
+command='gnome-system-monitor'
+name='gnome-system-monitor'

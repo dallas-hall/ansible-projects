@@ -8,8 +8,8 @@
     state: touch
 
 - name: Adding customisations to the /home/$USER/.xprofile file
-  template: # https://docs.ansible.com/ansible/latest/modules/template_module.html
-    src: templates/xprofile-user.j2
+  copy: # https://docs.ansible.com/ansible/latest/modules/template_module.html
+    src: xprofile-user
     dest: "/home/{{ username }}/.xprofile"
     owner: "{{ username }}"
     group: "{{ username }}"
