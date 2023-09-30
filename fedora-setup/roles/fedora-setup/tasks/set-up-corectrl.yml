@@ -1,0 +1,8 @@
+---
+- name: Adding CoreCtrl to Polkit for passwordless use.
+  template:
+    src: "corectrl.j2"
+    dest: "/etc/polkit-1/rules.d/90-corectrl.rules"
+    owner: root
+    group: root
+    mode: 0644

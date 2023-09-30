@@ -1,0 +1,3 @@
+---
+using_amd_gpu: True
+using_nvidia_gpu: False

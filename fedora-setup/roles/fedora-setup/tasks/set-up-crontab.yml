@@ -1,0 +1,25 @@
+---
+# https://stackoverflow.com/a/30615516
+- name: Copy crontab file for {{ username }}.
+  become_user: "{{ username }}"
+  copy:
+    src: files/desktop-crontab.dallas
+    dest: /tmp/crontab.dallas
+    mode: '0644'
+  register: result
+
+- name: Ensure crontab file is active for {{ username }}.
+  become_user: "{{ username }}"
+  shell: crontab /tmp/crontab.dallas
+  when: result|changed
+
+- name: Copy crontab file for root.
+  copy:
+    src: files/desktop-crontab.root
+    dest: /tmp/crontab.dallas
+    mode: '0644'
+  register: result
+
+- name: Ensure crontab file is active for root.
+  shell: crontab /tmp/crontab.root
+  when: result|changed

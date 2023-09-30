@@ -1,7 +1,7 @@
 ---
-- name: Update OS
-  import_tasks: update-os.yml
-  become: true
+# - name: Update OS
+#   import_tasks: update-os.yml
+#   become: true
 
 - name: Configure Gnome DE.
   import_tasks: set-up-gnome.yml
@@ -21,19 +21,39 @@
 
 - name: Add ~/.bashrc entries
   import_tasks: set-up-bashrc.yml
-  become: true
+  tags:
+    - set_up_bashrc
 
 - name: Add ~/.vimrc entries
   import_tasks: set-up-vimrc.yml
   become: true
+  tags:
+    - set_up_vimrc
 
 - name: Add ~/.xprofile entries
   import_tasks: set-up-xprofile.yml
   become: true
+  tags:
+    - set_up_xprofile
 
 - name: Add /etc/X11/xorg.conf.d/ files
   import_tasks: set-up-xorg.yml
   become: true
+  tags:
+    - set_up_xorg
+
+- name: Set up CoreCtrl
+  import_tasks: set-up-corectrl.yml
+  become: true
+  tags:
+    - set_up_corectrl
+
+- name: Set up crontab
+  import_tasks: set-up-crontab.yml
+  become: true
+  when: "'my-dell-laptop' in group_names"
+  tags:
+    - set_up_cron
 
 # Handled by a new role.
 #- name: Install RPM Fusion.
@@ -43,7 +63,35 @@
 - name: Install software - dnf.
   import_tasks: install-software-dnf.yml
   become: true
+  tags:
+    - install-via-dnf
 
 - name: Install software - flatpak.
   import_tasks: install-software-flatpak.yml
   become: true
+  tags:
+    - install-via-flatpak
+
+- name: Increase kernel limits.
+  become: True
+  lineinfile:
+    path: /etc/dnf/dnf.conf
+    regexp: '^installonly_limit='
+    line: installonly_limit=5
+
+
+
+# TODO
+#
+# Refactor using group_vars ✅ and host_vars ❌
+#
+# cron jobs ✅
+# enable postfix mail ❌
+# backup symlinks ❌
+# corectrl group setup ✅
+# Dell laptop - intel-undervolt ❌, i8kmon ❌, xorg.conf ✅
+# tags for desktop / laptop ❌
+# anki, flathub v zip ❌
+# kernel amounts ✅
+# fstrim ❌
+# crypttab and fstab ❌

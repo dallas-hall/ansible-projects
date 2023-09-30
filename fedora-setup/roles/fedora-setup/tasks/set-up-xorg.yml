@@ -1,8 +1,18 @@
 ---
-- name: Copy files to /etc/X11/xorg.conf.d/
+- name: Copy 99-libinput.conf to /etc/X11/xorg.conf.d/
   copy:
     src: files/99-libinput.conf
     dest: /etc/X11/xorg.conf.d/99-libinput.conf
     owner: root
     group: root
     mode: '0644'
+
+# Sets NVidia GPU as as the default GPU for NVidia Prime.
+- name: Copy laptop-dell-nvidia.conf to /etc/X11/xorg.conf.d/
+  copy:
+    src: files/laptop-dell-nvidia.conf
+    dest: /etc/X11/xorg.conf.d/nvidia.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: "'my-dell-laptop' in group_names"

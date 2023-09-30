@@ -112,6 +112,8 @@
       - smartmontools
       # Display keyboard strokes on screen
       - screenkey
+      # Laptop undervolting
+      - intel-undervolt
       state: present
       update_cache: yes
 

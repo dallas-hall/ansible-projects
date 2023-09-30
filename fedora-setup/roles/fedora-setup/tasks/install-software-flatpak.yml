@@ -7,7 +7,6 @@
     # Messaging & video conferencing
     - org.signal.Signal
     - com.slack.Slack
-    - com.microsoft.Teams
     - com.discordapp.Discord
     - us.zoom.Zoom
     # Internet
@@ -15,4 +14,8 @@
     - org.mozilla.firefox
     # Development
     - com.getpostman.Postman
+    # Gaming
+    - com.valvesoftware.SteamLink
+    # Learning
+    - net.ankiweb.Anki
     state: present
