@@ -2,10 +2,22 @@
 - name: Install useful packages.
   ansible.builtin.package:
     name:
-    - lsof
     - bash-completion
     - bash-completion-extras
-    - nmap-ncat
+    # Text
+    - less
+    - vim-enhanced
+    - diffutils
+    # Networking
     - bind-utils
+    - nmap-ncat
+    - iproute
+    - net-tools
+    - mtr
+    - ncurses
+    - openssh-clients
+    # Processes
     - htop
+    - iotop
+    - lsof
     state: latest
