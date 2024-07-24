@@ -10,6 +10,7 @@ fi
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
+alias cd='pushd'
 alias l='ls -AFhl --color=auto'
 alias li='ls -AFhil --color=auto'
 alias gnome-terminal='gnome-terminal --maximize'
@@ -51,13 +52,15 @@ cyan=$(tput setaf 6)
 white=$(tput setaf 7)
 #user_color=$green
 #[ "$UID" -eq 0 ] && { user_color=$red; }
-export PS1="\[$reset\]\[$bold\][\u@\H \W] $ \[$reset\]"
+export PS1="\[$reset\]\[$bold\][\u@\H \W] \\$ \[$reset\]"
 
+# https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html#index-HISTCONTROL
 # Shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
-export HISTCONTROL=ignoreboth:erasedups
+#export HISTCONTROL=ignoreboth:erasedups
+export HISTCONTROL=ignorespace
 shopt -s histappend
 
-#increase history size
+# Increase history size
 export HISTSIZE=99999
 
 # Add timestamps to history
@@ -110,4 +113,3 @@ if [[ -f /usr/local/bin/kubectl ]]; then
   alias k='kubectl'
   complete -F __start_kubectl k
 fi
-
