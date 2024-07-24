@@ -54,6 +54,7 @@
     insertafter: EOF
     block: |
       # User specific aliases and functions
+      alias cd='pushd'
       alias l='ls -AFhl --color=auto'
       alias li='ls -AFhil --color=auto'
       alias gnome-terminal='gnome-terminal --maximize'
@@ -63,6 +64,7 @@
       alias ssh-add-keys-1-hour='echo "ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519"; ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519'
       alias k8s-show-all-namespace-objects=" kubectl api-resources --verbs=list --namespaced -o name  | xargs -n 1 kubectl get --show-kind --ignore-not-found  -n"
       alias rsync='rsync --stats --progress --human-readable'
+      alias vi='/usr/bin/vim'
 
       # Coloured man pages
       man() {
@@ -77,7 +79,7 @@
           man "$@"
       }
       export GROFF_NO_SGR=1 #needed to get colours working
-      
+
       # Custom bash prompt
       # http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
       #export PS1="\[\033[38;5;10m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput sgr0)\]\[\033[38;5;250m\]\H\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;11m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \\$ \[$(tput sgr0)\]"
@@ -95,29 +97,29 @@
       white=$(tput setaf 7)
       #user_color=$green
       #[ "$UID" -eq 0 ] && { user_color=$red; }
-      export PS1="\[$reset\]\[$bold\][\u@\H \W] $ \[$reset\]"
-      
+      export PS1="\[$reset\]\[$bold\][\u@\H \W] \\$ \[$reset\]"
+
       # https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html#index-HISTCONTROL
       # Shell history ignores if the same command was entered - https://unix.stackexchange.com/a/18443
       #export HISTCONTROL=ignoreboth:erasedups
       export HISTCONTROL=ignorespace
       shopt -s histappend
-      
+
       # Increase history size
       export HISTSIZE=99999
 
       # Add timestamps to history
       HISTTIMEFORMAT="%F %T "
-      
+
       #allow vi commands to be used within bash
       set -o vi
-      
+
       # Java
       if [[ -d /opt/jdk1.8.0 ]]; then
         export JAVA_HOME=/opt/jdk1.8.0
         export PATH=$JAVA_HOME/bin:$PATH
       fi
-      
+
       # Oracle Network alias file - https://oracle.github.io/odpi/doc/installation.html#local-database-or-full-oracle-client
       if [[ -f /opt/oracle/network ]]; then
         export TNS_ADMIN=/opt/oracle/network
@@ -125,15 +127,15 @@
       # Oracle linking path - https://oracle.github.io/odpi/doc/installation.html#oracle-instant-client-zip
       #export LD_LIBRARY_PATH=/opt/oracle/product/12.2.0/instantclient_12_2:$LD_LIBRARY_PATH
       #export ORACLE_HOME=/opt/oracle/product/12.2.0/instantclient_12_2
-      
+
       # Use bash completion
       if [[ -f /etc/profile.d/bash_completion.sh ]]; then
         . /etc/profile.d/bash_completion.sh
       fi
-      
+
       # geckodriver from Mozilla, for Python's selenium
       export PATH=/home/dhall/Code/python:$PATH
-      
+
       # Ansible - https://docs.ansible.com/ansible/latest/reference_appendices/config.html#environment-variables
       #export ANSIBLE_ROLES_PATH=$(realpath /home/dhall/Code/ansible/galaxy-roles)
       if [[ -f /home/dhall/Code/ansible/config-file ]]; then
@@ -147,13 +149,13 @@
       fi
       # https://stackoverflow.com/a/51702320
       export ANSIBLE_HOST_KEY_CHECKING=False
-      
+
       # Execution paths - https://unix.stackexchange.com/questions/36871/where-should-a-local-executable-be-placed
       # PATH is covered by default ~/.bash_profile (RedHat) or ~/.profile (Debian)
       if [[ ! -d $HOME/.local/bin ]]; then
         mkdir -p $HOME/.local/bin
       fi
-      
+
       # kubectl bash completion - https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
       if [[ -f /usr/local/bin/kubectl-v1.21.5 ]]; then
         source <(kubectl completion bash)
@@ -167,7 +169,7 @@
         chmod 0700 /tmp/dhall
         ln -s /tmp/dhall ~/tmp
       fi
-      
+
       # Increase bash timeout to 4 hours - https://unix.stackexchange.com/questions/400920/where-is-tmout-being-set-in-centos-7-how-can-i-disable-it
       if [[ -v "$TMOUT" ]]; then
         export TMOUT=14000
@@ -197,28 +199,28 @@
       #    ssh-add -t 28000 ~/.ssh/id_rsa_stash
       #  fi
       #fi
-      
+
       # Upgrade from above
       if [[ $(id -un) = "${USER}" ]]; then
         ssh-add -l &>/dev/null
         rcode=${?}
-      
+
       # agent running and contactable but no identities
         if [[ ${rcode} -eq 1 ]]; then
           # add all ssh keys with default names
           ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519
-      
+
         # agent not contactable (rcode2=1) -OR- not running (rcode2=2)
         elif [[ ${rcode} -eq 2 ]]; then
           [[ -r ~/.ssh-agent ]] && eval "$(<~/.ssh-agent)" >/dev/null
           # set up requisite environment variables
           ssh-add -l &>/dev/null
           rcode2=${?}
-      
+
           if [[ ${rcode2} -eq 1 ]]; then
             # add all ssh keys with default names
             ssh-add -t 3600 ~/.ssh/id_rsa ~/.ssh/id_ed25519
-      
+
           elif [[ ${rcode2} -eq 2 ]]; then
             (umask 066 ; ssh-agent > ~/.ssh-agent)
             # start ssh-agent
